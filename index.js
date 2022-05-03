@@ -91,12 +91,15 @@ app.get('/proof/:serialNo', (req, res) => {
 // }
 
 function addLeaf(q){
-  console.log(q)
+  let newLeaf=[q]
+  leafdata.push(newLeaf)
+  genTree()
+  console.log('New Root:'+root)
 }
 
 app.post('/add', (req, res)=> {
   console.log('Got body:', req.body.serialNo)
-  addLeaf(req.body.query)
+  addLeaf(req.body.serialNo)
   res.sendStatus(200)
 })
 
