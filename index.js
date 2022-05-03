@@ -57,7 +57,7 @@ function genTree(){
 genTree()
 
 
-const table={'value':'connected'}
+const table={'value':root}
 
 app.get('/', (req, res) => {
   res.send(table)
