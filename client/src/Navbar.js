@@ -13,8 +13,8 @@ function Navbar({accounts,setAccounts}) {
     }
 
     return (
-        <div>
-            {isConnected?<p>Connected</p>:<button onClick={connectAccount}>Connect</button>}
+        <div class="container mx-auto text-center">
+            {isConnected?<p>Connected</p>:<button class="btn btn-primary " onClick={connectAccount}>Connect</button>}
         </div>
     );
 }

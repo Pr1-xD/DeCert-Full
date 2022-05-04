@@ -65,9 +65,7 @@ app.get('/', (req, res) => {
 
 
 app.get('/proof/:serialNo', (req, res) => {
-  var checkNo =req.params.serialNo 
-  console.log(checkNo) 
-  const checkleaf = eth.utils.solidityKeccak256(["uint256"], [checkNo])
+  var checkleaf =req.params.serialNo 
   console.log("Leaf:")
   console.log(checkleaf.toString('hex'))
 
@@ -80,16 +78,6 @@ app.get('/proof/:serialNo', (req, res) => {
   res.send(generatedProof)
 })
 
-// function sqlQuery(q){
-//   connection.connect(function(err) {
-//     connection.query(q, function (err, result) {
-//       if (err) throw err;
-//       console.log(result);
-//       console.log('Updated');
-//     });
-// });  
-// }
-
 function addLeaf(q){
   let newLeaf=[q]
   leafdata.push(newLeaf)
@@ -100,7 +88,7 @@ function addLeaf(q){
 app.post('/add', (req, res)=> {
   console.log('Got body:', req.body.serialNo)
   addLeaf(req.body.serialNo)
-  res.sendStatus(200)
+  res.send(root)
 })
 
 
