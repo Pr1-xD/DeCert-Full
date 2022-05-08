@@ -4,6 +4,7 @@ const router= express.Router()
 const cors = require('cors')
 const port = 5000
 
+
 const { MerkleTree } = require('merkletreejs')
 const keccak256= require("keccak256");
 const eth= require('ethers');
@@ -89,6 +90,14 @@ app.post('/add', (req, res)=> {
   console.log('Got body:', req.body.serialNo)
   addLeaf(req.body.serialNo)
   res.send(root)
+})
+
+app.post("/verify/:serialNumber", (req, res) => {
+
+  let serialNumber = req.params.serialNumber;
+  console.log(serialNumber);
+  
+
 })
 
 

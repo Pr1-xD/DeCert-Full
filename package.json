@@ -16,13 +16,16 @@
     "concurrently": "^5.3.0"
   },
   "dependencies": {
+    "@pinata/sdk": "^1.1.25",
     "axios": "^0.20.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "ethers": "^5.6.4",
     "express": "^4.17.1",
+    "ipfs": "^0.62.3",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.31",
+    "mongodb": "^4.5.0",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.5"
   }
