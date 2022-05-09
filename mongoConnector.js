@@ -77,7 +77,7 @@ async function addSerial(client, Serial) {
     if (result) {
 
         const res = await client.db("Serials").collection("CertificateSerials").insertOne(Serial);
-        console.log(`Added a new cert with id ${res.insertedId}`);
+        console.log(`Added a new Serial with id ${res.insertedId}`);
 
     }
     else {
@@ -138,10 +138,10 @@ async function AddSerialToCID(client, data) {
 
     if (result) {
         const res = await client.db("Serials").collection("SerialCID").insertOne(data);
-        console.log(`Added a new cert with id ${res.insertedId}`);
+        console.log(`Added a new serial with id ${res.insertedId}`);
     }
     else {
-        console.log(`The Cerificate of ${data.serial} already exists`);
+        console.log(`The CID of ${data.serial} already exists`);
     }
 
 
@@ -158,6 +158,16 @@ async function GetCIDFromSerial(client, serialNumber) {
 
 }
 
+async function getCert(client, serialNumber) {
+
+    // console.log(data.serial.toString);
+    const res = await client.db("Serials").collection("Certificate").findOne({ serial: serialNumber });
+    console.log(res);
+    return res;
+
+
+}
+
 async function deleteData(client, data) {
 
     client.db("Serials").collection("Certificate").deleteOne({ SerialNum: data });
@@ -166,11 +176,14 @@ async function deleteData(client, data) {
 
 }
 
-async function findData(client, Collection, data) {
-    console.log(data.serial.toString);
-    const res = await client.db("Serials").collection(Collection).findOne({ serial: data.serial.toString() });
+async function getSerialData(client, serialNumber) {
+
+    // console.log(data.serial.toString);
+    const res = await client.db("Serials").collection("CertificateSerials").findOne({ serial: serialNumber });
     console.log(res);
     return res;
+
+
 }
 
 
@@ -206,9 +219,20 @@ async function main() {
 
     console.log(cid);
 
+    const cert_1 =  await getCert(client, 123456);
+
     disconnect(client);
 
 }
 
-main();
+// main();
+
+module.exports.connect = connect;
+module.exports.disconnect = disconnect;
+module.exports.GetCIDFromSerial = GetCIDFromSerial;
+module.exports.getSerialData = getSerialData;
+module.exports.findData = findData;
+module.exports.getCert = getCert;
+module.exports.deleteData = deleteData;
+
 
