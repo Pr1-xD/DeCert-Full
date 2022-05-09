@@ -1,19 +1,31 @@
 import './App.css';
 import {useState} from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import NavBar from './Navbar';
 import MainVerify from './Mainverify'
+import Main from './Main'
+import Verify from './Verify';
 
 function App() {
-
   const [accounts,setAccounts] = useState([])
-
   return (
-    <div className="container-fluid mx-auto  mt-10 flex">
-      <br></br><br></br>
-      <h1 class="mx-auto text-center">DeCert</h1>
-      <NavBar accounts={accounts} setAccounts={setAccounts} />
-      <MainVerify accounts={accounts} setAccounts={setAccounts} />
+    <div>
+      <Routes>
+          <Route path="/" element={<Main accounts={accounts} setAccounts={setAccounts}/>} />
+          <Route path=":SerialNumber" element={<Verify accounts={accounts} setAccounts={setAccounts}/>} />
+          <Route
+          path="*"
+          element={
+            <main style={{ padding: "1rem" }}>
+              <p>There's nothing here!</p>
+            </main>
+          }
+        />
+          {/* <Route path="/login" component={Login} /> */}
+      </Routes>
     </div>
+    
+    
   );
 }
 
