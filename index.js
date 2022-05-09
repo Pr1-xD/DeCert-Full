@@ -1,13 +1,13 @@
 const express = require('express')
 const app = express()
-const router= express.Router()
+const router = express.Router()
 const cors = require('cors')
 const port = 5000
 
 
 const { MerkleTree } = require('merkletreejs')
-const keccak256= require("keccak256");
-const eth= require('ethers');
+const keccak256 = require("keccak256");
+const eth = require('ethers');
 
 app.use(cors())
 
@@ -19,7 +19,7 @@ app.use(
 
 app.use(express.json())
 
-let leafdata=[
+let leafdata = [
   [190550],
   [200],
   [300],
@@ -27,38 +27,38 @@ let leafdata=[
   [500]
 ]
 
-let tree=null
-let root=null
-let leaves=null
+let tree = null
+let root = null
+let leaves = null
 
-function genTree(){
+function genTree() {
   leaves = leafdata.map(x => eth.utils.solidityKeccak256(["uint256"], x))
 
-  tree = new MerkleTree(leaves,keccak256,{sort:true})
+  tree = new MerkleTree(leaves, keccak256, { sort: true })
   root = tree.getHexRoot()
   console.log("Root:");
-  console.log(root)  
-  
-  
+  console.log(root)
+
+
   const leaf = eth.utils.solidityKeccak256(["uint256"], [190550])
   console.log("Leaf:")
   console.log(leaf.toString('hex'))
-  
+
   const proof = tree.getProof(leaf)
   const hexproof = tree.getHexProof(leaf)
   console.log("Proof:")
   console.log(hexproof)
-  
+
   console.log(tree.verify(proof, leaf, root)) // true
-  
+
   console.log(tree.toString())
-  
+
 }
 
 genTree()
 
 
-const table={'value':root}
+const table = { 'value': root }
 
 app.get('/', (req, res) => {
   res.send(table)
@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
 
 
 app.get('/proof/:serialNo', (req, res) => {
-  var checkleaf =req.params.serialNo 
+  var checkleaf = req.params.serialNo
   console.log("Leaf:")
   console.log(checkleaf.toString('hex'))
 
@@ -74,19 +74,19 @@ app.get('/proof/:serialNo', (req, res) => {
   const checkhexproof = tree.getHexProof(checkleaf)
   console.log("Proof:")
   console.log(checkhexproof)
-  let generatedProof={'proof':checkhexproof}
+  let generatedProof = { 'proof': checkhexproof }
   console.log(tree.verify(checkproof, checkleaf, root)) // true
   res.send(generatedProof)
 })
 
-function addLeaf(q){
-  let newLeaf=[q]
+function addLeaf(q) {
+  let newLeaf = [q]
   leafdata.push(newLeaf)
   genTree()
-  console.log('New Root:'+root)
+  console.log('New Root:' + root)
 }
 
-app.post('/add', (req, res)=> {
+app.post('/add', (req, res) => {
   console.log('Got body:', req.body.serialNo)
   addLeaf(req.body.serialNo)
   res.send(root)
@@ -96,7 +96,7 @@ app.post("/verify/:serialNumber", (req, res) => {
 
   let serialNumber = req.params.serialNumber;
   console.log(serialNumber);
-  
+
 
 })
 

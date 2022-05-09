@@ -1,3 +1,39 @@
+/* 
+
+    The format of data uploaded on the Db
+
+    - CertificateSerials Collection -
+
+    const serial = {
+        index: 0,
+        serial: 123456
+    }
+
+
+    - Certificate Collection -
+
+    const cert = {
+        Name: "Aashish",
+        RegistrationNumber: "19BCE0971",
+        DegreeName: "Bachelor of Technology",
+        YearOfStudy: "2019",
+        School: "School of Computer Science and Engineering",
+        University: "Vellore institute of Technology",
+        SerialNum: 123456
+    }
+
+    - SerialCID - 
+
+    const SerialCID = {
+        serial = 123456,
+        CID = "QmdDd9SPqumgVg9ndG8H6tAUg4fUW6J3ghuRiXnTjzgbyn"
+    }
+
+*/
+
+
+
+
 const { MongoClient } = require("mongodb");
 
 async function connect() {
@@ -82,6 +118,46 @@ async function addCertificate(client, Cert) {
 
 }
 
+/* 
+
+This stores it in form of Serial number and it's CID
+    
+    - Serial Number
+    - CID
+
+    Collection Name: SerialCID
+
+    The collection hosts a number of entires that have cid mapped to them so that they can be further used to fetch the
+    data uploaded on ipfs
+
+*/
+
+async function AddSerialToCID(client, data) {
+
+    const result = true // TODO: to make it so that serial number is a unique entry.
+
+    if (result) {
+        const res = await client.db("Serials").collection("SerialCID").insertOne(data);
+        console.log(`Added a new cert with id ${res.insertedId}`);
+    }
+    else {
+        console.log(`The Cerificate of ${data.serial} already exists`);
+    }
+
+
+}
+
+// This should return a string of the serial number 
+async function GetCIDFromSerial(client, serialNumber) {
+
+    // console.log(data.serial.toString);
+    const res = await client.db("Serials").collection("SerialCID").findOne({ serial: serialNumber });
+    console.log(res);
+    return res.CID;
+
+
+}
+
 async function deleteData(client, data) {
 
     client.db("Serials").collection("Certificate").deleteOne({ SerialNum: data });
@@ -92,13 +168,13 @@ async function deleteData(client, data) {
 
 async function findData(client, Collection, data) {
     console.log(data.serial.toString);
-    const res = await client.db("Serials").collection(Collection).findOne({serial: data.serial.toString()});
+    const res = await client.db("Serials").collection(Collection).findOne({ serial: data.serial.toString() });
     console.log(res);
     return res;
 }
 
 
-async function main(){
+async function main() {
 
     const client = await connect();
     const serial = {
@@ -114,10 +190,21 @@ async function main(){
         YearOfStudy: "2019",
         School: "School of Computer Science and Engineering",
         University: "Vellore institute of Technology",
-        SerialNum: 123456
+        serial: 123456
     }
 
     await addCertificate(client, cert);
+
+    const SerialCID = {
+        serial: 123456,
+        CID: "QmdDd9SPqumgVg9ndG8H6tAUg4fUW6J3ghuRiXnTjzgbyn"
+    }
+
+    AddSerialToCID(client, SerialCID);
+
+    const cid = await GetCIDFromSerial(client, 123456) 
+
+    console.log(cid);
 
     disconnect(client);
 
