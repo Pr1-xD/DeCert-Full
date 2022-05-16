@@ -227,12 +227,20 @@ async function main() {
 
 // main();
 
-module.exports.connect = connect;
-module.exports.disconnect = disconnect;
-module.exports.GetCIDFromSerial = GetCIDFromSerial;
-module.exports.getSerialData = getSerialData;
-module.exports.findData = findData;
-module.exports.getCert = getCert;
-module.exports.deleteData = deleteData;
+module.exports = {
+
+    connect,
+    disconnect,
+    GetCIDFromSerial,
+    addCertificate,
+    addSerial,
+    AddSerialToCID,
+    deleteData,
+    getSerialData,
+    getCert,
+    
+
+}
+
 
 
