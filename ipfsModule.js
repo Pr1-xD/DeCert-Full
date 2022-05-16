@@ -101,7 +101,10 @@ async function fetchCert(hash) {
         .catch((err) => { })
 }
 
-module.exports.fetchCert = fetchCert(hash);
+module.exports = {
+    fetchCert
+}
+
 
 const cert = {
     Name: "Priyanshu",
