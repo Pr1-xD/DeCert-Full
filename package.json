@@ -24,6 +24,7 @@
     "express": "^4.17.1",
     "ipfs": "^0.62.3",
     "keccak256": "^1.0.6",
+    "lodash": "^4.17.21",
     "merkletreejs": "^0.2.31",
     "mongodb": "^4.5.0",
     "mysql": "^2.18.1",

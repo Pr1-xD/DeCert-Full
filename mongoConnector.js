@@ -42,7 +42,6 @@ async function connect() {
     const client = new MongoClient(uri);
 
     try {
-
         await client.connect();
         await listDatabases(client);
     }
@@ -152,7 +151,7 @@ async function GetCIDFromSerial(client, serialNumber) {
 
     // console.log(data.serial.toString);
     const res = await client.db("Serials").collection("SerialCID").findOne({ serial: serialNumber });
-    console.log(res);
+    // console.log(res);
     return res.CID;
 
 
@@ -162,7 +161,7 @@ async function getCert(client, serialNumber) {
 
     // console.log(data.serial.toString);
     const res = await client.db("Serials").collection("Certificate").findOne({ serial: serialNumber });
-    console.log(res);
+    // console.log(res);
     return res;
 
 
@@ -180,7 +179,7 @@ async function getSerialData(client, serialNumber) {
 
     // console.log(data.serial.toString);
     const res = await client.db("Serials").collection("CertificateSerials").findOne({ serial: serialNumber });
-    console.log(res);
+    // console.log(res);
     return res;
 
 
@@ -190,42 +189,51 @@ async function getSerialData(client, serialNumber) {
 async function main() {
 
     const client = await connect();
-    const serial = {
-        index: 0,
-        serial: 123456
-    }
-    await addSerial(client, serial);
+    // const serial = {
+    //     index: 0,
+    //     serial: 123456
+    // }
+    // await addSerial(client, serial);
 
-    const cert = {
-        Name: "Aashish",
-        RegistrationNumber: "19BCE0971",
-        DegreeName: "Bachelor of Technology",
-        YearOfStudy: "2019",
-        School: "School of Computer Science and Engineering",
-        University: "Vellore institute of Technology",
-        serial: 123456
-    }
+    // const cert = {
+    //     Name: "Aashish",
+    //     RegistrationNumber: "19BCE0971",
+    //     DegreeName: "Bachelor of Technology",
+    //     YearOfStudy: "2019",
+    //     School: "School of Computer Science and Engineering",
+    //     University: "Vellore institute of Technology",
+    //     serial: 123456
+    // }
 
-    await addCertificate(client, cert);
+    // await addCertificate(client, cert);
 
-    const SerialCID = {
-        serial: 123456,
-        CID: "QmdDd9SPqumgVg9ndG8H6tAUg4fUW6J3ghuRiXnTjzgbyn"
-    }
+    // const SerialCID = {
+    //     serial: 123456,
+    //     CID: "QmdDd9SPqumgVg9ndG8H6tAUg4fUW6J3ghuRiXnTjzgbyn"
+    // }
 
-    AddSerialToCID(client, SerialCID);
+    // AddSerialToCID(client, SerialCID);
 
-    const cid = await GetCIDFromSerial(client, 123456) 
+    // const cid = await GetCIDFromSerial(client, 123456) 
 
-    console.log(cid);
+    // console.log(cid);
 
-    const cert_1 =  await getCert(client, 123456);
+    // const cert_1 =  await getCert(client, 123456);
+
+    const data = await getSerialData(client, 123456);
+    console.log(data.serial);
 
     disconnect(client);
 
 }
 
 // main();
+
+module.exports = async function test() {
+    
+    console.log("Test");
+
+}
 
 module.exports = {
 

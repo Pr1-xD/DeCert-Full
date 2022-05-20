@@ -3,9 +3,9 @@ const app = express()
 const router = express.Router()
 const cors = require('cors')
 const port = 5000
-const db = require("./mongoConnector")
+const DB = require("./mongoConnector")
 const ipfs = require("./ipfsModule")
-
+const _ = require("lodash")
 const { MerkleTree } = require('merkletreejs')
 const keccak256 = require("keccak256");
 const eth = require('ethers');
@@ -120,41 +120,60 @@ app.post('/add', (req, res) => {
 
 */
 
-app.post("/verify/:serialNumber", (req, res) => {
+app.get("/verify/:serialNumber", async (req, res) => {
 
-  const client = db.connect();
+
   let serialNumber = req.params.serialNumber;
 
+  console.log("The serial number is:",serialNumber);
+  
+  serialNumber = parseInt(serialNumber);
+
+  const client = await DB.connect();
+
   //getting serial data from serial Db
-  const serialJSON = db.getSerialData(client, serialNumber);
+  const serialJSON = await DB.getSerialData(client, serialNumber);
+
+  console.log("The serial number data is: ", serialJSON);
 
   //getting Certificate data
-  const certJSON = db.getCert(client, serialJSON.serial);
+  const certJSON = await DB.getCert(client, serialJSON.serial);
 
   // getting the CID from DB
-  const CID = db.GetCIDFromSerial(client, serialJSON.serial);
+  const CID = await DB.GetCIDFromSerial(client, serialJSON.serial);
 
-  console.log(serialNumber);
+  // console.log(serialNumber);
   const checkproof = tree.getProof(serialNumber)
   const checkhexproof = tree.getHexProof(serialNumber)
 
   // getting proof
-  console.log("Proof:")
+  // console.log("Proof:")
   console.log(checkhexproof)
   let generatedProof = { 'proof': checkhexproof };
-  const ProofJSON  = tree.verify(checkproof, serialNumber, root);
+  const ProofJSON = tree.verify(checkproof, serialNumber, root);
 
   // fetching cert from ipfs
-  const Cert = ipfs.fetchCert(CID)
+  const Cert = await ipfs.fetchCert(CID)
+
+  let verified = false
+  delete certJSON['_id'];
+
+  console.log("LOGS", Cert);
+  console.log("LOGS 2", certJSON);
+  console.log("LOGS 3", JSON.stringify(Cert) == JSON.stringify(certJSON));
+
+
 
   // comparing
-  if (JSON.stringify(Cert) == JSON.stringify(certJSON)) { const verified = true }
-  else { const verified = false }
+  if (JSON.stringify(Cert) == JSON.stringify(certJSON)) {verified = true }
+  
 
+  // console.log(verified);
 
+  let ResponseJSON = ''
 
-  if(ProofJSON.proof == false) {
-    const ResponseJSON = {
+  if (ProofJSON.proof == false) {
+    ResponseJSON = {
 
       err: "PROOF_ERR",
       descr: "The Proof for the leaf is not true"
@@ -163,19 +182,20 @@ app.post("/verify/:serialNumber", (req, res) => {
 
   }
   else if (verified) {
-    const ResponseJSON = {
+    ResponseJSON = {
 
       serial: serialJSON.serial,
       proofHash: generatedProof,
       leafHash: checkhexproof,
       CID,
+      verified,
       IPFSUrl: `https://cloudflare-ipfs.com/ipfs/${CID}`
 
     }
   }
-  else if (!verified){
+  else if (!verified) {
 
-    const ResponseJSON = {
+    ResponseJSON = {
 
       err: "CERT_ERR",
       descr: "The Certificates stored on IPFS and Db Are not same"
@@ -184,12 +204,29 @@ app.post("/verify/:serialNumber", (req, res) => {
 
   }
 
-  
+
+  console.log("Response: ", ResponseJSON);
+
   res.send(ResponseJSON);
 
 
+
+  // foo(serialNumber);
+
 })
 
+
+const CompareCert = (cert1, cert2) => {
+
+  return (cert1.Name == cert2.Name 
+          && cert1.RegistrationNumber == cert2.RegistrationNumber
+          && cert1.DegreeName == cert2.DegreeName
+          && cert1.YearOfStudy == cert2.YearOfStudy
+          && cert1.School == cert2.School
+          && cert1.University == cert2.University)
+          return cert1.SerialNum == cert2.SerialNum;
+
+}
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
