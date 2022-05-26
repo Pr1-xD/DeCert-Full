@@ -14,6 +14,9 @@ function Verify({accounts,setAccounts}) {
       console.log(res)
       console.log(res.data.IPFSUrl)
       setIpfsLink(res.data.IPFSUrl)
+    }).catch(err=>{
+        console.log(err)
+        setIpfsLink("err")
     })
     }
     function redirectToIPFS(){
@@ -45,8 +48,8 @@ function Verify({accounts,setAccounts}) {
             <br/>
             <div class="text-center">
                 {ipfsLink?<h3>Result: </h3>:<></>}
-                {ipfsLink?<h3>Verified</h3>:<></>}
-                {ipfsLink?<h3 onClick={redirectToIPFS}>Click to View</h3>:<></>}
+                {ipfsLink&&(ipfsLink!="err")?<h3>Verified</h3>:ipfsLink=="err"?<h3>Unverified</h3>:<></>}
+                {ipfsLink&&(ipfsLink!="err")?<h3 onClick={redirectToIPFS}>Click to View</h3>:<></>}
             </div>
         </div>
     );
